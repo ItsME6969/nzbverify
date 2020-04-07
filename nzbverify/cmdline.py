@@ -22,6 +22,8 @@ import os
 import signal
 import sys
 import time
+from gzip import GzipFile
+from io import BytesIO
 
 sys.path.append('../')
 
@@ -88,13 +90,20 @@ class ProgressBar(object):
         self.update()
         sys.stdout.write("\n")
 
-def main(nzb, config):
+def main(nzb_fn, config):
     threads     = []
     files       = []
     seg_count   = 0
     bytes_total = 0
     segments    = Queue.Queue()
     missing     = Queue.Queue()
+
+    if nzb_fn.endswith('.gz'):
+        with open(nzb_fn) as f:
+            nzb = BytesIO(GzipFile('', 'r', 0, f).read())
+    else:
+        with open(nzb_fn) as f:
+            nzb = BytesIO(f.read())
 
     # Listen for exit
     def signal_handler(signal, frame):
@@ -163,7 +172,7 @@ def main(nzb, config):
     print "Created %d/%d threads" % (tid, num_connections)
 
     # Parse NZB and populate the Queue
-    print "Parsing NZB: %s" % nzb
+    print "Parsing NZB: %s" % nzb_fn
     for event, elem in iterparse(nzb, events=("start", "end")):
         if event == "start" and elem.tag.endswith('file'):
             files.append(elem.get('subject'))
