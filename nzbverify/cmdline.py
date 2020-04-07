@@ -21,8 +21,6 @@ import time
 from gzip import GzipFile
 from io import BytesIO
 
-sys.path.append('../')
-
 from nzbverify import __author__, __version__, conf, thread
 from nzbverify.server import Server
 
