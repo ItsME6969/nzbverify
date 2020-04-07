@@ -20,7 +20,7 @@ def get_error_code(error):
     """
     Attempts to extract the NNTP error code number from an NNTPError, which
     are of the form:
-    
+
         430 No such article
     """
     error = str(error)
@@ -30,9 +30,9 @@ class NNTP(nntplib.NNTP):
     """
     An NNTP client that supports SSL/TLS.  Most of this code is back-ported from
     Python 3.2 (see source below).
-  
+
     NOTE: SSL support has been tested but TLS support has not.
-  
+
     Source:
         http://svn.python.org/view/python/branches/release32-maint/Lib/nntplib.py
     """
@@ -57,11 +57,11 @@ class NNTP(nntplib.NNTP):
         # before we try to authenticate.
         if 'STARTTLS' in self.getcapabilities():
             self.starttls()
-    
+
         # Perform authentication if needed.
         if user:
             self.login(user, password)
-  
+
     def login(self, user, password):
         if self.authenticated:
             raise ValueError("Already logged in.")
@@ -77,7 +77,7 @@ class NNTP(nntplib.NNTP):
                         raise nntplib.NNTPPermanentError(resp)
 
         self.authenticated = True
-  
+
     def starttls(self, context=None):
         """
         Process a STARTTLS command. Arguments:
@@ -102,7 +102,7 @@ class NNTP(nntplib.NNTP):
                 self.getcapabilities()
             else:
                 raise nntplib.NNTPError("TLS failed to start.")
-  
+
     def getcapabilities(self):
         """
         If the CAPABILITIES command is not supported, an empty dict is
@@ -124,7 +124,7 @@ class NNTP(nntplib.NNTP):
             if 'IMPLEMENTATION' in self._caps:
                 self.nntp_implementation = ' '.join(caps['IMPLEMENTATION'])
         return self._caps
-  
+
     def capabilities(self):
         """
         Process a CAPABILITIES command.  Not supported by all servers.
@@ -136,7 +136,7 @@ class NNTP(nntplib.NNTP):
             name, tokens = bits[0], bits[1:]
             caps[name] = tokens
         return resp, caps
-  
+
     def wrap_socket(self, sock, use_ssl):
         """
         Wrap a socket in SSL/TLS. Arguments:
