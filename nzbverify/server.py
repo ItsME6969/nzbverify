@@ -1,9 +1,7 @@
 import logging
-import threading
-
-import nntplib
 import nntp
-
+import nntplib
+import threading
 from Queue import Queue
 
 log = logging.getLogger("server")
@@ -91,7 +89,7 @@ class Server(object):
             if self.conf.get("backup"):
                 self.log(log.info, "Found segment '%s' on backup server" % segment[1])
 
-        except nntplib.NNTPTemporaryError, e:
+        except nntplib.NNTPTemporaryError as e:
             # Error code 430 is "No such article"
             error = nntp.get_error_code(e)
             if error == '430':
@@ -113,6 +111,6 @@ class Server(object):
                 segments.put(segment)
                 return
 
-        except Exception, e:
+        except Exception as e:
             log.error("Unknown error: %s" % e)
             return

@@ -122,7 +122,7 @@ class NNTP(nntplib.NNTP):
                 # choose the highest.
                 self.nntp_version = max(map(int, self._caps['VERSION']))
             if 'IMPLEMENTATION' in self._caps:
-                self.nntp_implementation = ' '.join(caps['IMPLEMENTATION'])
+                self.nntp_implementation = ' '.join(self._caps['IMPLEMENTATION'])
         return self._caps
 
     def capabilities(self):

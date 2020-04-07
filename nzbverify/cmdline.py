@@ -10,15 +10,11 @@ TODO:
     * Better handling of credentials
     * Check for existance of NZB file before starting threads
 """
-from __future__ import division
+from __future__ import division, print_function
 
 import Queue
 import getopt
-import getpass
 import logging
-import netrc
-import nntplib
-import os
 import signal
 import sys
 import time
@@ -135,15 +131,15 @@ def main(nzb_fn, config):
 
         num_connections += settings.get("connections", 0)
 
-    print "Found %d primary host%s" % (len(primary_servers), len(primary_servers) != 1 and "s" or "")
+    print("Found %d primary host%s" % (len(primary_servers), len(primary_servers) != 1 and "s" or ""))
     for host in primary_servers:
-        print "  ", host
+        print("  %s" % host)
 
-    print "Found %d backup host%s" % (len(backup_servers), len(backup_servers) != 1 and "s" or "")
+    print("Found %d backup host%s" % (len(backup_servers), len(backup_servers) != 1 and "s" or ""))
     for host in backup_servers:
-        print "  ", host
+        print("  %s" % host)
 
-    #print "Creating %d threads" % num_connections
+    #print("Creating %d threads" % num_connections)
 
     priority = 0
     for host in primary_servers:
@@ -169,10 +165,10 @@ def main(nzb_fn, config):
             except:
                 break
 
-    print "Created %d/%d threads" % (tid, num_connections)
+    print("Created %d/%d threads" % (tid, num_connections))
 
     # Parse NZB and populate the Queue
-    print "Parsing NZB: %s" % nzb_fn
+    print("Parsing NZB: %s" % nzb_fn)
     for event, elem in iterparse(nzb, events=("start", "end")):
         if event == "start" and elem.tag.endswith('file'):
             files.append(elem.get('subject'))
@@ -183,7 +179,7 @@ def main(nzb_fn, config):
             seg_count += 1
 
     size, unit = get_size(bytes_total)
-    print "Found %d files and %d segments totaling %s %s" % (len(files), seg_count, size, unit)
+    print("Found %d files and %d segments totaling %s %s" % (len(files), seg_count, size, unit))
 
     pbar = ProgressBar(segments, missing)
 
@@ -198,24 +194,24 @@ def main(nzb_fn, config):
     num_missing = missing.qsize()
     if num_missing > 0:
         missing_bytes = 0
-        print "Result: missing %d/%d segments; %0.2f%% complete" % (num_missing, seg_count, ((seg_count-num_missing)/seg_count * 100.00))
+        print("Result: missing %d/%d segments; %0.2f%% complete" % (num_missing, seg_count, ((seg_count-num_missing)/seg_count * 100.00)))
         while not missing.empty():
             f, seg, bytes = missing.get()
             missing_bytes += bytes
-            print '\tfile="%s", segment="%s"' % (f, seg)
+            print('\tfile="%s", segment="%s"' % (f, seg))
 
         size, unit = get_size(missing_bytes)
-        print "Missing %s %s" % (size, unit)
+        print("Missing %s %s" % (size, unit))
     else:
-        print "Result: all %d segments available" % seg_count
+        print("Result: all %d segments available" % seg_count)
 
     thread.stop_threads(threads)
 
 def print_usage():
-    print __usage__ % __prog__
+    print(__usage__ % __prog__)
 
 def run():
-    print "nzbverify version %s, Copyright (C) 2014 %s" % (__version__, __author__)
+    print("nzbverify version %s, Copyright (C) 2014 %s" % (__version__, __author__))
 
     config    = None
     log_file  = None
@@ -225,7 +221,7 @@ def run():
     opts, args = getopt.getopt(sys.argv[1:], 'c:l:n:h', ["config=", "log=", "level=", "help"])
     for o, a in opts:
         if o in ("-h", "--help"):
-            print __help__
+            print(__help__)
             print_usage()
             sys.exit(0)
         elif o in ("-c", "--config"):
@@ -234,7 +230,7 @@ def run():
             log_file = a
         elif o in ("-n", "--level"):
             try:
-                log_level = int(n)
+                log_level = int(a)
             except:
                 log_level = 0
 
@@ -255,13 +251,13 @@ def run():
     # Load NNTP details from config files
     config = conf.get_config(config)
     if not config:
-        print "Error: No config file found"
+        print("Error: No config file found")
         sys.exit(0)
 
     if len(config) < 1:
-        print "Error: Didn't find any servers"
+        print("Error: Didn't find any servers")
         sys.exit(0)
 
     start = time.time()
     main(nzb, config)
-    print "Verification took %s seconds" % (time.time() - start)
+    print("Verification took %s seconds" % (time.time() - start))

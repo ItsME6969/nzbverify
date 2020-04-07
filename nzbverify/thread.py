@@ -1,7 +1,5 @@
 import logging
 import threading
-import nntp
-import nntplib
 
 from server import ConnectionClosedException
 
@@ -63,15 +61,15 @@ class SegmentCheckerThread(threading.Thread):
 
                 try:
                     self.server.check_segment(connection, segment, self.segments, self.missing)
-                except ConnectionClosedException, e:
+                except ConnectionClosedException:
                     connection = self.server.create_connection()
-                except Exception, e:
+                except Exception as e:
                     log.error("Unknown error: %s" % e)
 
                 if q:
                     q.task_done()
 
-        except Exception, e:
+        except Exception:
             try:
                 connection.quit()
             except:
