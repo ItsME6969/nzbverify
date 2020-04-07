@@ -1,13 +1,7 @@
 import logging
 import nntplib
 import socket
-
-try:
-    import ssl
-except ImportError:
-    _have_ssl = False
-else:
-    _have_ssl = True
+import ssl
 
 log = logging.getLogger('NNTP')
 
@@ -85,23 +79,22 @@ class NNTP(nntplib.NNTP):
         """
         # Per RFC 4642, STARTTLS MUST NOT be sent after authentication or if
         # a TLS session already exists.
-        if _have_ssl:
-            if self.tls_on:
-                raise ValueError("TLS is already enabled.")
-            if self.authenticated:
-                raise ValueError("TLS cannot be started after authentication.")
-            resp = self._shortcmd('STARTTLS')
-            if resp.startswith('382'):
-                self.file.close()
-                self.sock = self.wrap_socket(self.sock)
-                self.file = self.sock.makefile("rwb")
-                self.tls_on = True
-                # Capabilities may change after TLS starts up, so ask for them
-                # again.
-                self._caps = None
-                self.getcapabilities()
-            else:
-                raise nntplib.NNTPError("TLS failed to start.")
+        if self.tls_on:
+            raise ValueError("TLS is already enabled.")
+        if self.authenticated:
+            raise ValueError("TLS cannot be started after authentication.")
+        resp = self._shortcmd('STARTTLS')
+        if resp.startswith('382'):
+            self.file.close()
+            self.sock = self.wrap_socket(self.sock)
+            self.file = self.sock.makefile("rwb")
+            self.tls_on = True
+            # Capabilities may change after TLS starts up, so ask for them
+            # again.
+            self._caps = None
+            self.getcapabilities()
+        else:
+            raise nntplib.NNTPError("TLS failed to start.")
 
     def getcapabilities(self):
         """
@@ -150,7 +143,7 @@ class NNTP(nntplib.NNTP):
         if use_ssl is None and self.port in SSL_PORTS:
             use_ssl = True
 
-        if _have_ssl and use_ssl:
+        if use_ssl:
             log.debug("Using SSL")
             return ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_TLSv1)
         return sock
