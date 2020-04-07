@@ -12,5 +12,5 @@ setup(
     license='LICENSE',
     description='Utility for verifying the completeness of an NZB.',
     long_description=open('README').read(),
-    scripts=['bin/nzbverify']
+    entry_points={'console_scripts': ['nzbverify = nzbverify.__main__:main']},
 )

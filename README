@@ -28,7 +28,7 @@ including both a primary and a backup server:
 
 The example below reads the NNTP server information from ``~/.netrc``::
 
-  $ nzbverify tests/nzbs/ubuntu-12_04-dvd-amd64_iso.nzb
+  $ python -m nzbverify tests/nzbs/ubuntu-12_04-dvd-amd64_iso.nzb
   nzbverify version 0.3.0, Copyright (C) 2014 Weston Nielson <wnielson@github>
   Found 1 primary host
      ssl.mynewshost.com
