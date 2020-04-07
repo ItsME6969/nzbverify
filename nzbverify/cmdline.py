@@ -12,9 +12,9 @@ TODO:
 """
 from __future__ import division, print_function
 
-import Queue
 import getopt
 import logging
+import Queue
 import signal
 import sys
 import time
@@ -26,7 +26,7 @@ from nzbverify.server import Server
 
 try:
     from xml.etree.cElementTree import iterparse
-except:
+except ImportError:
     from xml.etree.ElementTree import iterparse
 
 

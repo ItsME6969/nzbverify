@@ -1,8 +1,9 @@
 import logging
-import nntp
 import nntplib
 import threading
 from Queue import Queue
+
+import nntp
 
 log = logging.getLogger("server")
 

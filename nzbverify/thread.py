@@ -72,5 +72,5 @@ class SegmentCheckerThread(threading.Thread):
         except Exception:
             try:
                 connection.quit()
-            except:
+            except Exception:
                 pass
