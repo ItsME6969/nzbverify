@@ -64,9 +64,9 @@ class ProgressBar(object):
         self.segment_count = segments.qsize()
 
         digits = len(str(self.segment_count))
-        self._msg = ("Available: %%0%ds [%%s], "
-                     "Missing: %%0%ds [%%s], "
-                     "Total: %%0%ds [%%s]" %
+        self._msg = ("Available: %%0%ds [\033[92m%%s\033[34m], "
+                     "Missing: %%0%ds [\033[31m%%s\033[34m], "
+                     "Total: %%0%ds [\033[37m%%s\033[34m]" %
                      (digits,digits,digits))
 
     def update(self):
@@ -192,16 +192,16 @@ def main(nzb_fn, config):
     num_missing = missing.qsize()
     if num_missing > 0:
         missing_bytes = 0
-        print("Result: missing %d/%d segments; %0.2f%% complete" % (num_missing, seg_count, ((seg_count-num_missing)/seg_count * 100.00)))
-        while not missing.empty():
-            f, seg, bytes = missing.get()
-            missing_bytes += bytes
-            print('\tfile="%s", segment="%s"' % (f, seg))
+        print("Result: Missing %d/%d Segments; %0.2f%% Complete" % (num_missing, seg_count, ((seg_count-num_missing)/seg_count * 100.00)))
+        #while not missing.empty():
+           # f, seg, bytes = missing.get()
+           # missing_bytes += bytes
+           # print('\tfile="%s", segment="%s"' % (f, seg))
 
-        size, unit = get_size(missing_bytes)
-        print("Missing %s %s" % (size, unit))
+        #size, unit = get_size(missing_bytes)
+        #print("Missing %s %s" % (size, unit))
     else:
-        print("Result: all %d segments available" % seg_count)
+        print("Result: ALL Segments Available")
 
     thread.stop_threads(threads)
 
@@ -258,4 +258,4 @@ def run():
 
     start = time.time()
     main(nzb, config)
-    print("Verification took %s seconds" % (time.time() - start))
+    print("Verification took %ss" % round((time.time() - start), 1))
